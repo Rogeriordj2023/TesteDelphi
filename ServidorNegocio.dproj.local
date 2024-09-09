@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <Transactions>
+    <Transaction>2024/09/09 12:24:06.051,C:\TesteDelphi\ServidorNegocio.dproj=C:\Projetos Delphi\Project1.dproj</Transaction>
+    <Transaction>2024/09/09 12:24:57.971,=C:\TesteDelphi\Unit1.pas</Transaction>
+    <Transaction>2024/09/09 12:25:20.823,C:\TesteDelphi\UServer.pas=C:\TesteDelphi\Unit1.pas</Transaction>
+    <Transaction>2024/09/09 12:25:32.360,=C:\TesteDelphi\Unit1.pas</Transaction>
+    <Transaction>2024/09/09 12:25:46.699,C:\TesteDelphi\UNegocio.pas=C:\TesteDelphi\Unit1.pas</Transaction>
+    <Transaction>2024/09/09 12:26:05.460,=C:\TesteDelphi\Unit1.pas</Transaction>
+    <Transaction>2024/09/09 12:27:18.109,C:\TesteDelphi\UDados.pas=C:\TesteDelphi\Unit1.pas</Transaction>
+    <Transaction>2024/09/09 12:27:18.109,C:\TesteDelphi\UDados.dfm=C:\TesteDelphi\Unit1.dfm</Transaction>
+    <Transaction>2024/09/09 12:38:48.376,=C:\TesteDelphi\Unit2.pas</Transaction>
+  </Transactions>
+</BorlandProject>
