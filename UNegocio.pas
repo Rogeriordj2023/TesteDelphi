@@ -3,15 +3,22 @@ unit UNegocio;
 interface
 
 uses
-  UDados, Data.DB, System.SysUtils;
+  UDados, Data.DB, System.SysUtils,
+  System.Classes, IdHTTPServer, IdContext, IdCustomHTTPServer, IdGlobal, System.JSON;
 
 type
   TClienteNegocio = class
   public
     function ListarClientes: TDataSet;
+    function DeleteClientById(const ClientId: string): Boolean;
   end;
 
 implementation
+
+function TClienteNegocio.DeleteClientById(const ClientId: string): Boolean;
+begin
+                //
+end;
 
 function TClienteNegocio.ListarClientes: TDataSet;
 begin
@@ -20,6 +27,8 @@ begin
 
   Result := DataModuleDB.ExecutarQuery('SELECT * FROM clientes');
 end;
+
+
 
 end.
 

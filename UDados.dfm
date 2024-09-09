@@ -10,11 +10,13 @@ object DataModule1: TDataModule1
       'DriverID=PG'
       'POOL_MaximumItems=50000'
       'ExtendedMetadata=True')
+    Connected = True
     LoginPrompt = False
     Left = 200
     Top = 64
   end
   object FDQuery1: TFDQuery
+    Active = True
     Connection = FDConnection1
     SQL.Strings = (
       'select * from pessoa')
