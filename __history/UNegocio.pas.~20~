@@ -28,10 +28,11 @@ begin
   Query := TFDQuery.Create(nil);
   try
     Query.Connection := UDados.DataModuleDB.FDConnection1;
-    Query.SQL.Text := 'DELETE FROM PESSOA WHERE id = :id';
+    Query.SQL.Text := 'DELETE FROM clientes WHERE id = :id';
     Query.ParamByName('id').AsString := ClientId;
     Query.ExecSQL;
 
+    // Verificar se alguma linha foi afetada
     Result := Query.RowsAffected > 0;
   finally
     Query.Free;

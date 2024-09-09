@@ -17,7 +17,23 @@ implementation
 
 function TClienteNegocio.DeleteClientById(const ClientId: string): Boolean;
 begin
+  var
+  Query: TFDQuery;
+begin
+  Result := False;
 
+  Query := TFDQuery.Create(nil);
+  try
+    Query.Connection := UDados.DataModuleDB.FDConnection1;
+    Query.SQL.Text := 'DELETE FROM clientes WHERE id = :id';
+    Query.ParamByName('id').AsString := ClientId;
+    Query.ExecSQL;
+
+    // Verificar se alguma linha foi afetada
+    Result := Query.RowsAffected > 0;
+  finally
+    Query.Free;
+  end;
 end;
 
 function TClienteNegocio.ListarClientes: TDataSet;
@@ -25,7 +41,7 @@ begin
   if not DataModuleDB.Conectar then
     raise Exception.Create('Erro ao conectar ao banco de dados');
 
-  Result := DataModuleDB.ExecutarQuery('SELECT * FROM clientes');
+  Result := DataModuleDB.ExecutarQuery('SELECT * FROM PESSOA');
 end;
 
 

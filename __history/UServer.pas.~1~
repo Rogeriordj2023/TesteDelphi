@@ -49,12 +49,6 @@ begin
     end;
   end
   else
-  if ARequestInfo.Document = '/deletarclientes' then
-  begin
-    JSONArr := TJSONArray.Create;
-
-  end
-  else
     AResponseInfo.ResponseNo := 404;
 end;
 

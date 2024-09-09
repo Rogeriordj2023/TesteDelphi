@@ -32,6 +32,7 @@ begin
     Query.ParamByName('id').AsString := ClientId;
     Query.ExecSQL;
 
+    // Verificar se alguma linha foi afetada
     Result := Query.RowsAffected > 0;
   finally
     Query.Free;
