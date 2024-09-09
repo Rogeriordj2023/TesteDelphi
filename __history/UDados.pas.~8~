@@ -1,0 +1,57 @@
+unit UDados;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Def, FireDAC.Phys.PG,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
+  FireDAC.Phys.Intf, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
+  FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
+  FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Phys.PGDef;
+
+type
+  TDataModule1 = class(TDataModule)
+    FDConnection1: TFDConnection;
+    FDQuery1: TFDQuery;
+  public
+    function Conectar: Boolean;
+    function ExecutarQuery(const ASQL: string): TFDQuery;
+  end;
+
+var
+  DataModuleDB: TDataModule1;
+
+implementation
+
+{$R *.dfm}
+
+function TDataModule1.Conectar: Boolean;
+begin
+  try
+    {FDConnection1.DriverName := 'PG';
+    FDConnection1.Params.Database := 'postgres';
+    FDConnection1.Params.UserName := 'postgres';
+    FDConnection1.Params.Password := 'postgres';
+    FDConnection1.Params.Add('Server=localhost');
+    FDConnection1.Params.Add('Port=5432');}
+    FDConnection1.Connected := True;
+    Result := True;
+  except
+    on E: Exception do
+    begin
+      Result := False;
+      raise Exception.Create('Erro ao conectar ao banco de dados: ' + E.Message);
+    end;
+  end;
+end;
+
+function TDataModule1.ExecutarQuery(const ASQL: string): TFDQuery;
+begin
+  FDQuery1.Close;
+  FDQuery1.SQL.Text := ASQL;
+  FDQuery1.Open;
+  Result := FDQuery1;
+end;
+
+end.
+

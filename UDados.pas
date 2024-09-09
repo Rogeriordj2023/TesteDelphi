@@ -7,12 +7,13 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
   FireDAC.Phys.Intf, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
   FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
-  FireDAC.DApt, FireDAC.Comp.DataSet;
+  FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Phys.PGDef ;
 
 type
   TDataModule1 = class(TDataModule)
     FDConnection1: TFDConnection;
     FDQuery1: TFDQuery;
+    FDPhysPgDriverLink1: TFDPhysPgDriverLink;
   public
     function Conectar: Boolean;
     function ExecutarQuery(const ASQL: string): TFDQuery;
