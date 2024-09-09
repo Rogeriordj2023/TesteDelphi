@@ -4,7 +4,8 @@ interface
 
 uses
   UDados, Data.DB, System.SysUtils,
-  System.Classes, IdHTTPServer, IdContext, IdCustomHTTPServer, IdGlobal, System.JSON;
+  System.Classes, IdHTTPServer, IdContext, IdCustomHTTPServer, IdGlobal, System.JSON,
+  FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.Stan.Param, FireDAC.Stan.Intf;
 
 type
   TClienteNegocio = class
@@ -16,14 +17,25 @@ type
 implementation
 
 function TClienteNegocio.DeleteClientById(const ClientId: string): Boolean;
+var 
+  Query: TFDQuery;
 begin
-  {if not DataModuleDB.Conectar then
+  Result := False;
+
+  if not DataModuleDB.Conectar then
     raise Exception.Create('Erro ao conectar ao banco de dados');
 
-  if DataModuleDB.ExecutarQuery('DELETE FROM PESSOA WHERE IDPESSOA=:IDPESSOA') then
-  
+  Query := TFDQuery.Create(nil);
+  try
+    Query.Connection := UDados.DataModuleDB.FDConnection1;
+    Query.SQL.Text := 'DELETE FROM PESSOA WHERE id = :id';
+    Query.ParamByName('id').AsString := ClientId;
+    Query.ExecSQL;
 
-  Result := DataModuleDB.ExecutarQuery('DELETE FROM PESSOA WHERE IDPESSOA=:IDPESSOA');}
+    Result := Query.RowsAffected > 0;
+  finally
+    Query.Free;
+  end;
 end;
 
 function TClienteNegocio.ListarClientes: TDataSet;
