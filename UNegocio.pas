@@ -15,6 +15,7 @@ type
     function DeletePessoa(const ClientId: string): Integer;
     function ConsultarCEP(const ACep: string): string;
     function InserirPessoa(const DJson: TJSONObject): Integer;
+    function AlterarPessoa(const DJson: TJSONObject; const IdPessoa:integer): Integer;
   end;
 
 implementation
@@ -54,15 +55,16 @@ begin
   try
     Query.Connection := DataProvider.FDConnection;
     Query.SQL.Text := 'INSERT INTO PESSOA(flnatureza, dsdocumento, nmprimeiro, nmsegundo, dtregistro)' +
-                      'VALUES(:flnatureza, :dsdocumento, ::nmprimeiro, :nmsegundo, :dtregistro)';           ;
-    Query.ParamByName('flnatureza').AsInteger := 1;
+                      'VALUES(:flnatureza, :dsdocumento, :nmprimeiro, :nmsegundo, :dtregistro)';           ;
+    Query.ParamByName('flnatureza').AsInteger := StrtoInt(DJson.Values['flnatureza'].Value);
     Query.ParamByName('dsdocumento').AsString := DJson.Values['dsdocumento'].Value;
     Query.ParamByName('nmprimeiro').AsString  := DJson.Values['nmprimeiro'].Value;
     Query.ParamByName('nmsegundo').AsString   := DJson.Values['nmsegundo'].Value;
     Query.ParamByName('dtregistro').AsDate    := date();
     Query.ExecSQL;
 
-    Result := Query.FieldByName('idpessoa').Value;
+    DataProvider.FDConnection.Commit;
+    Result := 1;
   finally
     Query.Free;
   end;
@@ -74,6 +76,35 @@ begin
     raise Exception.Create('Erro ao conectar ao banco de dados'); 
 
   Result := DataProvider.ExecutarQuery('SELECT * FROM PESSOA');
+end;
+
+function TClienteNegocio.AlterarPessoa(const DJson: TJSONObject; const IdPessoa: integer): Integer;
+var
+  Query: TFDQuery;
+begin
+  Result := 0;
+
+  if not DataProvider.Conectar then
+    raise Exception.Create('Erro ao conectar ao banco de dados');
+
+  Query := TFDQuery.Create(nil);
+  try
+    Query.Connection := DataProvider.FDConnection;
+    Query.SQL.Text := 'UPDATE PESSOA SET flnatureza=:flnatureza, dsdocumento=:dsdocumento, nmprimeiro=:nmprimeiro, nmsegundo=:nmsegundo' +
+                      'WHERE IDPESSOA=:IDPESSOA';
+    Query.ParamByName('IDPESSOA').AsInteger   := IdPessoa;
+    Query.ParamByName('flnatureza').AsInteger := StrtoInt(DJson.Values['flnatureza'].Value);
+    Query.ParamByName('dsdocumento').AsString := DJson.Values['dsdocumento'].Value;
+    Query.ParamByName('nmprimeiro').AsString  := DJson.Values['nmprimeiro'].Value;
+    Query.ParamByName('nmsegundo').AsString   := DJson.Values['nmsegundo'].Value;
+    Query.ExecSQL;
+
+    DataProvider.FDConnection.Commit;
+    Result := 1;
+  finally
+    Query.Free;
+  end;
+
 end;
 
 function TClienteNegocio.ConsultarCEP(const ACep: string): string;
