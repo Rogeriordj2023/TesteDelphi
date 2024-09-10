@@ -114,10 +114,16 @@ begin
     try
       if Assigned(JSONBody) then
       begin
-        if JSONBody.Values['teste'] <> nil then
-          ResponseText := 'Campo recebido: ' + JSONBody.Values['teste'].Value
-        else
-          ResponseText := 'Campo não encontrado no JSON';
+        //if JSONBody.Values['teste'] <> nil then
+        //  ResponseText := 'Campo recebido: ' + JSONBody.Values['teste'].Value
+        //else
+        //  ResponseText := 'Campo não encontrado no JSON';
+
+        // ********************* //
+        //        TO-DO          //
+        // ********************* //
+        // 1. Criar e chamar função Negocio.InserirPessoa.
+        // 2. Renomear tudo que está de Cliente para Pessoa
 
         AResponseInfo.ContentText := ResponseText;
         AResponseInfo.ResponseNo := 200;
@@ -130,7 +136,13 @@ end;
 
 procedure TServidorREST.HandlePut(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
 begin
-
+        // ********************* //
+        //        TO-DO          //
+        // ********************* //
+        // 1. Validar se IdPessoa foi informado e consultar no banco se existe
+        // 2. Pegar o parametro da rota (igual no delete)
+        // 3. Pegar o corpo do BODY (igual o insert)
+        // 4. Criar e chamar função Negocio.AlterarPessoa.
 end;
 
 procedure TServidorREST.HandleDelete(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);

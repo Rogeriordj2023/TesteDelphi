@@ -9,16 +9,14 @@ type
   TServidorREST = class
   private
     FServer: TIdHTTPServer;
-    //procedure OnCommandGet(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
-    //procedure OnCommandPost(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
-    //procedure OnCommandPut(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
-    //procedure OnCommandDelete(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
 
     procedure ProcessRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
     procedure HandleGet(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
     procedure HandlePost(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
     procedure HandlePut(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
     procedure HandleDelete(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+
+    procedure HandleErrors400(AMsg: string; var AResponseInfo: TIdHTTPResponseInfo);
   public
     procedure StartServer;
     procedure StopServer;
@@ -28,70 +26,6 @@ implementation
 
 uses
   System.JSON;
-
-{procedure TServidorREST.OnCommandGet(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
-var
-  Negocio: TClienteNegocio;
-  JSONArr: TJSONArray;
-  Cliente: TJSONObject;
-  DataSet: TDataSet;
-  JSONBody: TJSONObject;
-  ResponseText, Route, IdPessoa: string;
-  PostData: TStringStream;
-begin
-  if (ARequestInfo.Command = 'GET') and (ARequestInfo.Document = '/clientes') then
-  begin
-    Negocio := TClienteNegocio.Create;
-    try
-      DataSet := Negocio.ListarClientes;
-      JSONArr := TJSONArray.Create;
-      while not DataSet.Eof do
-      begin
-        Cliente := TJSONObject.Create;
-        Cliente.AddPair('ID', DataSet.FieldByName('idpessoa').AsString);
-        Cliente.AddPair('Nome', DataSet.FieldByName('nmprimeiro').AsString);
-        JSONArr.AddElement(Cliente);
-        DataSet.Next;
-      end;
-      AResponseInfo.ContentType := 'application/json';
-      AResponseInfo.ContentText := JSONArr.ToString;
-      AResponseInfo.ResponseNo := 200;
-    finally
-      Negocio.Free;
-    end;
-  end
-  else
-//  if (ARequestInfo.Command = 'DELETE') and (ARequestInfo.Document.StartsWith('/clientes/')) then
-//  begin
-//    Route := ARequestInfo.Document;
-//    IdPessoa := Route.Substring(10);
-//
-//    Negocio.DeletePessoa(IdPessoa);
-//  end
-//  else
-  if (ARequestInfo.Command = 'POST') and (ARequestInfo.Document = '/clientes') then
-  begin
-    PostData := TStringStream.Create('', TEncoding.UTF8);
-    ARequestInfo.PostStream.Position := 0;
-    PostData.CopyFrom(ARequestInfo.PostStream, ARequestInfo.PostStream.Size);
-
-    JSONBody := TJSONObject.ParseJSONValue(PostData.DataString) as TJSONObject;
-    try
-      if Assigned(JSONBody) then
-      begin
-
-
-        AResponseInfo.ContentText := ResponseText;
-        AResponseInfo.ResponseNo := 200; // HTTP OK
-      end;
-    finally
-      JSONBody.Free;
-    end;
-  end
-  else
-    AResponseInfo.ResponseNo := 404;
-end;
-}
 
 procedure TServidorREST.ProcessRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
 begin
@@ -123,6 +57,12 @@ begin
 
   FServer.Active := True;
   Writeln('Servidor REST rodando na porta 8080...');
+end;
+
+procedure TServidorREST.HandleErrors400(AMsg: string; var AResponseInfo: TIdHTTPResponseInfo);
+begin
+  AResponseInfo.ContentText := AMsg;
+  AResponseInfo.ResponseNo := 400;
 end;
 
 procedure TServidorREST.HandleGet(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
@@ -174,13 +114,19 @@ begin
     try
       if Assigned(JSONBody) then
       begin
-        if JSONBody.Values['teste'] <> nil then
-          ResponseText := 'Campo recebido: ' + JSONBody.Values['teste'].Value
-        else
-          ResponseText := 'Campo não encontrado no JSON';
+        //if JSONBody.Values['teste'] <> nil then
+        //  ResponseText := 'Campo recebido: ' + JSONBody.Values['teste'].Value
+        //else
+        //  ResponseText := 'Campo não encontrado no JSON';
+
+        // ********************* //
+        //        TO-DO          //
+        // ********************* //
+        // 1. Criar e chamar função Negocio.InserirPessoa.
+        // 2. Renomear tudo que está de Cliente para Pessoa
 
         AResponseInfo.ContentText := ResponseText;
-        AResponseInfo.ResponseNo := 200; // HTTP OK
+        AResponseInfo.ResponseNo := 200;
       end;
     finally
       JSONBody.Free;
@@ -190,7 +136,13 @@ end;
 
 procedure TServidorREST.HandlePut(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
 begin
+        // ********************* //
+        //        TO-DO          //
+        // ********************* //
 
+        // 2. Pegar o parametro da rota (igual no delete)
+        // 3. Pegar o corpo do BODY (igual o insert)
+        // 4. Criar e chamar função Negocio.AlterarPessoa.
 end;
 
 procedure TServidorREST.HandleDelete(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
@@ -200,15 +152,18 @@ var
   RowsAffected: Integer;
   JSONObj: TJSONObject;
 begin
-  if (ARequestInfo.Document.StartsWith('/clientes/')) then
+  if (ARequestInfo.Document.StartsWith('/clientes')) then
   begin
     JSONObj := TJSONObject.Create;
     try
       Route := ARequestInfo.Document;
-      IdPessoa := Route.Substring(10);
+      IdPessoa := Route.Substring(9);
 
       if (IdPessoa = '') then
-        raise Exception.Create('Parametro IdPessoa é obrigatório.');
+      begin
+        HandleErrors400('Parametro IdPessoa é obrigatório.', AResponseInfo);
+        exit;
+      end;
 
       RowsAffected := Negocio.DeletePessoa(IdPessoa);
 
