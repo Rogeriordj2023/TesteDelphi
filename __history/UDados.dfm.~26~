@@ -12,19 +12,20 @@ object DataModule1: TDataModule1
       'ExtendedMetadata=True')
     Connected = True
     LoginPrompt = False
-    Left = 352
-    Top = 248
+    Left = 200
+    Top = 64
   end
   object FDQuery1: TFDQuery
+    Active = True
     Connection = FDConnection1
     SQL.Strings = (
       'select * from pessoa')
-    Left = 352
-    Top = 168
+    Left = 296
+    Top = 64
   end
   object FDPhysPgDriverLink1: TFDPhysPgDriverLink
     DriverID = 'PG'
-    Left = 352
-    Top = 96
+    Left = 80
+    Top = 64
   end
 end

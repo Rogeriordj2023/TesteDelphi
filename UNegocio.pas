@@ -22,8 +22,8 @@ var
 begin
   Result := False;
 
-  {if not DataModuleDB.Conectar then
-    raise Exception.Create('Erro ao conectar ao banco de dados');}
+  if not DataModuleDB.Conectar then
+    raise Exception.Create('Erro ao conectar ao banco de dados');
 
   Query := TFDQuery.Create(nil);
   try
@@ -40,8 +40,8 @@ end;
 
 function TClienteNegocio.ListarClientes: TDataSet;
 begin
-  {if not DataModuleDB.Conectar then
-    raise Exception.Create('Erro ao conectar ao banco de dados'); }
+  if not DataModuleDB.Conectar then
+    raise Exception.Create('Erro ao conectar ao banco de dados'); 
 
   Result := DataModuleDB.ExecutarQuery('SELECT * FROM PESSOA');
 end;

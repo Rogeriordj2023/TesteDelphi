@@ -10,20 +10,22 @@ object DataModule1: TDataModule1
       'DriverID=PG'
       'POOL_MaximumItems=50000'
       'ExtendedMetadata=True')
-    Connected = True
+    TxOptions.AutoStart = False
+    TxOptions.EnableNested = False
     LoginPrompt = False
-    Left = 352
-    Top = 248
+    Left = 200
+    Top = 64
   end
   object FDQuery1: TFDQuery
     Connection = FDConnection1
     SQL.Strings = (
       'select * from pessoa')
-    Left = 352
-    Top = 168
+    Left = 296
+    Top = 64
   end
   object FDPhysPgDriverLink1: TFDPhysPgDriverLink
-    Left = 352
-    Top = 96
+    DriverID = 'PG'
+    Left = 80
+    Top = 64
   end
 end
