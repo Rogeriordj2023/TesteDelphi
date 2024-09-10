@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>2024/09/09 12:24:06.000.051,C:\TesteDelphi\ServidorNegocio.dproj=C:\Projetos Delphi\Project1.dproj</Transaction>
+    <Transaction>2024/09/09 12:24:06.000.051,C:\Projetos Delphi\Project1.dproj=C:\TesteDelphi\ServidorNegocio.dproj</Transaction>
     <Transaction>2024/09/09 12:24:57.000.971,=C:\TesteDelphi\Unit1.pas</Transaction>
-    <Transaction>2024/09/09 12:25:20.000.823,C:\TesteDelphi\UServer.pas=C:\TesteDelphi\Unit1.pas</Transaction>
+    <Transaction>2024/09/09 12:25:20.000.823,C:\TesteDelphi\Unit1.pas=C:\TesteDelphi\UServer.pas</Transaction>
     <Transaction>2024/09/09 12:25:32.000.360,=C:\TesteDelphi\Unit1.pas</Transaction>
-    <Transaction>2024/09/09 12:25:46.000.699,C:\TesteDelphi\UNegocio.pas=C:\TesteDelphi\Unit1.pas</Transaction>
+    <Transaction>2024/09/09 12:25:46.000.699,C:\TesteDelphi\Unit1.pas=C:\TesteDelphi\UNegocio.pas</Transaction>
     <Transaction>2024/09/09 12:26:05.000.460,=C:\TesteDelphi\Unit1.pas</Transaction>
-    <Transaction>2024/09/09 12:27:18.000.109,C:\TesteDelphi\UDados.pas=C:\TesteDelphi\Unit1.pas</Transaction>
-    <Transaction>2024/09/09 12:27:18.000.109,C:\TesteDelphi\UDados.dfm=C:\TesteDelphi\Unit1.dfm</Transaction>
+    <Transaction>2024/09/09 12:27:18.000.109,C:\TesteDelphi\Unit1.dfm=C:\TesteDelphi\UDados.dfm</Transaction>
+    <Transaction>2024/09/09 12:27:18.000.109,C:\TesteDelphi\Unit1.pas=C:\TesteDelphi\UDados.pas</Transaction>
     <Transaction>2024/09/09 12:38:48.000.376,=C:\TesteDelphi\Unit2.pas</Transaction>
-    <Transaction>2024/09/09 22:06:03.477,=C:\TesteDelphi2\Unit1.pas</Transaction>
-    <Transaction>2024/09/09 22:06:59.586,C:\TesteDelphi2\UData.pas=C:\TesteDelphi2\Unit1.pas</Transaction>
+    <Transaction>2024/09/09 22:06:03.000.477,=C:\TesteDelphi2\Unit1.pas</Transaction>
+    <Transaction>2024/09/09 22:06:59.000.586,C:\TesteDelphi2\Unit1.pas=C:\TesteDelphi2\UData.pas</Transaction>
   </Transactions>
 </BorlandProject>
