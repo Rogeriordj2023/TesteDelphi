@@ -110,11 +110,7 @@
         </DelphiCompile>
         <DCCReference Include="UServer.pas"/>
         <DCCReference Include="UNegocio.pas"/>
-        <DCCReference Include="UDados.pas">
-            <Form>DataModule1</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
+        <DCCReference Include="UData.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

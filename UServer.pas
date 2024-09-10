@@ -3,7 +3,7 @@ unit UServer;
 interface
 
 uses
-  IdHTTPServer, IdCustomHTTPServer, IdContext, System.SysUtils, System.Classes, UNegocio, Data.DB;
+  IdHTTPServer, IdCustomHTTPServer, IdContext, System.SysUtils, System.Classes, UNegocio, Data.DB, UData;
 
 type
   TServidorREST = class
@@ -36,8 +36,8 @@ begin
       while not DataSet.Eof do
       begin
         Cliente := TJSONObject.Create;
-        Cliente.AddPair('ID', DataSet.FieldByName('ID').AsString);
-        Cliente.AddPair('Nome', DataSet.FieldByName('Nome').AsString);
+        Cliente.AddPair('ID', DataSet.FieldByName('idpessoa').AsString);
+        Cliente.AddPair('Nome', DataSet.FieldByName('nmprimeiro').AsString);
         JSONArr.AddElement(Cliente);
         DataSet.Next;
       end;
@@ -60,6 +60,7 @@ end;
 
 procedure TServidorREST.StartServer;
 begin
+  DataProvider := TDataProvider.Create();
   FServer := TIdHTTPServer.Create(nil);
   FServer.DefaultPort := 8080;
   FServer.OnCommandGet := OnCommandGet;

@@ -10,5 +10,7 @@
     <Transaction>2024/09/09 12:27:18.000.109,C:\TesteDelphi\UDados.pas=C:\TesteDelphi\Unit1.pas</Transaction>
     <Transaction>2024/09/09 12:27:18.000.109,C:\TesteDelphi\UDados.dfm=C:\TesteDelphi\Unit1.dfm</Transaction>
     <Transaction>2024/09/09 12:38:48.000.376,=C:\TesteDelphi\Unit2.pas</Transaction>
+    <Transaction>2024/09/09 22:06:03.477,=C:\TesteDelphi2\Unit1.pas</Transaction>
+    <Transaction>2024/09/09 22:06:59.586,C:\TesteDelphi2\UData.pas=C:\TesteDelphi2\Unit1.pas</Transaction>
   </Transactions>
 </BorlandProject>

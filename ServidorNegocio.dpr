@@ -8,11 +8,10 @@ uses
   System.SysUtils,
   UServer in 'UServer.pas',
   UNegocio in 'UNegocio.pas',
-  UDados in 'UDados.pas' {DataModule1: TDataModule};
+  UData in 'UData.pas';
 
 var
   Servidor: TServidorREST;
-
 begin
   try
     Servidor := TServidorREST.Create;

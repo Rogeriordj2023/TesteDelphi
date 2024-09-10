@@ -1,0 +1,58 @@
+unit UData;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Def, FireDAC.Phys.PG,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
+  FireDAC.Phys.Intf, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
+  FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
+  FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Phys.PGDef;
+
+type
+  TDataProvider = class(TObject)
+    FDConnection1: TFDConnection;
+    FDQuery1: TFDQuery;
+    FDPhysPgDriverLink1: TFDPhysPgDriverLink;
+  public
+    function Conectar: Boolean;
+    function ExecutarQuery(const ASQL: string): TFDQuery;
+  end;
+
+var
+  DataProvider: TDataProvider;
+
+implementation
+
+function TDataProvider.Conectar: Boolean;
+begin
+  Self.FDConnection1 := TFDConnection.Create(nil);
+
+  try
+    Self.FDConnection1.DriverName := 'PG';
+    Self.FDConnection1.Params.Database := 'Teste';
+    Self.FDConnection1.Params.UserName := 'postgres';
+    Self.FDConnection1.Params.Password := 'postgres';
+    Self.FDConnection1.Params.Add('Server=localhost');
+    Self.FDConnection1.Params.Add('Port=5432');
+    Self.FDConnection1.Connected := True;
+    Result := True;
+  except
+    on E: Exception do
+    begin
+      Result := False;
+      raise Exception.Create('Erro ao conectar ao banco de dados: ' + E.Message);
+    end;
+  end;
+end;
+
+function TDataProvider.ExecutarQuery(const ASQL: string): TFDQuery;
+begin
+  FDQuery1.Close;
+  FDQuery1.SQL.Text := ASQL;
+  FDQuery1.Open;
+  Result := FDQuery1;
+end;
+
+end.
+
