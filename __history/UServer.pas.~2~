@@ -52,7 +52,7 @@ begin
   if ARequestInfo.Document = '/deletarclientes' then
   begin
     JSONArr := TJSONArray.Create;
-    Negocio.DeleteClientById(DataSet.FieldByName('ID').AsString);
+
   end
   else
     AResponseInfo.ResponseNo := 404;
