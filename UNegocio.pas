@@ -14,13 +14,13 @@ type
     function ListarClientes: TDataSet;
     function DeletePessoa(const ClientId: string): Integer;
     function ConsultarCEP(const ACep: string): string;
-    function InserirPessoa(const DJson: TJSONObject): String;
+    function InserirPessoa(const DJson: TJSONObject): Integer;
   end;
 
 implementation
 
 function TClienteNegocio.DeletePessoa(const ClientId: string): Integer;
-var 
+var
   Query: TFDQuery;
 begin
   Result := 0;
@@ -41,9 +41,31 @@ begin
   end;
 end;
 
-function TClienteNegocio.InserirPessoa(const DJson: TJSONObject): String;
+function TClienteNegocio.InserirPessoa(const DJson: TJSONObject): Integer;
+var
+  Query: TFDQuery;
 begin
-//();
+  Result := 0;
+
+  if not DataProvider.Conectar then
+    raise Exception.Create('Erro ao conectar ao banco de dados');
+
+  Query := TFDQuery.Create(nil);
+  try
+    Query.Connection := DataProvider.FDConnection;
+    Query.SQL.Text := 'INSERT INTO PESSOA(flnatureza, dsdocumento, nmprimeiro, nmsegundo, dtregistro)' +
+                      'VALUES(:flnatureza, :dsdocumento, ::nmprimeiro, :nmsegundo, :dtregistro)';           ;
+    Query.ParamByName('flnatureza').AsInteger := 1;
+    Query.ParamByName('dsdocumento').AsString := DJson.Values['dsdocumento'].Value;
+    Query.ParamByName('nmprimeiro').AsString  := DJson.Values['nmprimeiro'].Value;
+    Query.ParamByName('nmsegundo').AsString   := DJson.Values['nmsegundo'].Value;
+    Query.ParamByName('dtregistro').AsDate    := date();
+    Query.ExecSQL;
+
+    Result := Query.FieldByName('idpessoa').Value;
+  finally
+    Query.Free;
+  end;
 end;
 
 function TClienteNegocio.ListarClientes: TDataSet;
@@ -80,7 +102,7 @@ begin
       JSONValue := TJSONObject.ParseJSONValue(RESTResponse.Content);
       if Assigned(JSONValue) then
       begin
-        Result := JSONValue.ToString;  // Retorna o JSON como string
+        Result := JSONValue.ToString;
         JSONValue.Free;
       end
       else

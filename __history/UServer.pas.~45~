@@ -15,6 +15,8 @@ type
     procedure HandlePost(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
     procedure HandlePut(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
     procedure HandleDelete(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+
+    procedure HandleErrors400(AMsg: string; var AResponseInfo: TIdHTTPResponseInfo);
   public
     procedure StartServer;
     procedure StopServer;
@@ -55,6 +57,12 @@ begin
 
   FServer.Active := True;
   Writeln('Servidor REST rodando na porta 8080...');
+end;
+
+procedure TServidorREST.HandleErrors400(AMsg: string; var AResponseInfo: TIdHTTPResponseInfo);
+begin
+  AResponseInfo.ContentText := AMsg;
+  AResponseInfo.ResponseNo := 400;
 end;
 
 procedure TServidorREST.HandleGet(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
@@ -106,13 +114,19 @@ begin
     try
       if Assigned(JSONBody) then
       begin
-        if JSONBody.Values['teste'] <> nil then
-          ResponseText := 'Campo recebido: ' + JSONBody.Values['teste'].Value
-        else
-          ResponseText := 'Campo não encontrado no JSON';
+        //if JSONBody.Values['teste'] <> nil then
+        //  ResponseText := 'Campo recebido: ' + JSONBody.Values['teste'].Value
+        //else
+        //  ResponseText := 'Campo não encontrado no JSON';
+
+        // ********************* //
+        //        TO-DO          //
+        // ********************* //
+        // 1. Criar e chamar função Negocio.InserirPessoa.
+        // 2. Renomear tudo que está de Cliente para Pessoa
 
         AResponseInfo.ContentText := ResponseText;
-        AResponseInfo.ResponseNo := 200; // HTTP OK
+        AResponseInfo.ResponseNo := 200;
       end;
     finally
       JSONBody.Free;
@@ -122,7 +136,13 @@ end;
 
 procedure TServidorREST.HandlePut(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
 begin
-
+        // ********************* //
+        //        TO-DO          //
+        // ********************* //
+        // 1. Validar se IdPessoa foi informado e consultar no banco se existe
+        // 2. Pegar o parametro da rota (igual no delete)
+        // 3. Pegar o corpo do BODY (igual o insert)
+        // 4. Criar e chamar função Negocio.AlterarPessoa.
 end;
 
 procedure TServidorREST.HandleDelete(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
@@ -141,7 +161,8 @@ begin
 
       if (IdPessoa = '') then
       begin
-        raise Exception.Create('Parametro IdPessoa é obrigatório.');
+        HandleErrors400('Parametro IdPessoa é obrigatório.', AResponseInfo);
+        exit;
       end;
 
       RowsAffected := Negocio.DeletePessoa(IdPessoa);

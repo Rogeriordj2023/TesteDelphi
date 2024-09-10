@@ -6,15 +6,15 @@ uses
   UData, Data.DB, System.SysUtils,
   System.Classes, IdHTTPServer, IdContext, IdCustomHTTPServer, IdGlobal, System.JSON,
   FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.Stan.Param, FireDAC.Stan.Intf,
-  REST.Client, Data.Bind.Components, Data.Bind.ObjectScope;
+  REST.Client, Data.Bind.Components, Data.Bind.ObjectScope, REST.Types;
 
 type
   TClienteNegocio = class
   public
     function ListarClientes: TDataSet;
     function DeletePessoa(const ClientId: string): Integer;
-    function TClienteNegocio.ConsultarCEP(const ACep: string): string;
-    //function InserirPessoa:  ****
+    function ConsultarCEP(const ACep: string): string;
+    function InserirPessoa(const DJson: TJSONObject): String;
   end;
 
 implementation
@@ -39,6 +39,11 @@ begin
   finally
     Query.Free;
   end;
+end;
+
+function TClienteNegocio.InserirPessoa(const DJson: TJSONObject): String;
+begin
+//();
 end;
 
 function TClienteNegocio.ListarClientes: TDataSet;
@@ -67,14 +72,11 @@ begin
     RESTRequest.Client := RESTClient;
     RESTRequest.Response := RESTResponse;
 
-    RESTRequest.Method := TRESTRequest.rmGET;
-
+    RESTRequest.Method := rmGet;
     RESTRequest.Execute;
 
-    // Verifica a resposta e retorna os dados
     if RESTResponse.StatusCode = 200 then
     begin
-      // Faz o parse do JSON para exibir as informações do endereço
       JSONValue := TJSONObject.ParseJSONValue(RESTResponse.Content);
       if Assigned(JSONValue) then
       begin
@@ -88,9 +90,8 @@ begin
     begin
       raise Exception.Create('Erro na consulta do CEP: ' + RESTResponse.StatusText);
     end;
-    
+
   finally
-    // Libera os componentes
     RESTClient.Free;
     RESTRequest.Free;
     RESTResponse.Free;
