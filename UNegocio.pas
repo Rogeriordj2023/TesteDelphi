@@ -11,16 +11,17 @@ type
   TClienteNegocio = class
   public
     function ListarClientes: TDataSet;
-    function DeleteClientById(const ClientId: string): Boolean;
+    function DeletePessoa(const ClientId: string): Integer;
+    //function InserirPessoa:  ****
   end;
 
 implementation
 
-function TClienteNegocio.DeleteClientById(const ClientId: string): Boolean;
+function TClienteNegocio.DeletePessoa(const ClientId: string): Integer;
 var 
   Query: TFDQuery;
 begin
-  Result := False;
+  Result := 0;
 
   if not DataProvider.Conectar then
     raise Exception.Create('Erro ao conectar ao banco de dados');
@@ -29,10 +30,10 @@ begin
   try
     Query.Connection := DataProvider.FDConnection;
     Query.SQL.Text := 'DELETE FROM PESSOA WHERE idpessoa = :id';
-    Query.ParamByName('id').AsString := ClientId;
+    Query.ParamByName('id').AsInteger := StrToInt(ClientId);
     Query.ExecSQL;
 
-    Result := Query.RowsAffected > 0;
+    Result := Query.RowsAffected;
   finally
     Query.Free;
   end;

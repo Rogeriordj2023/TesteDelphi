@@ -9,7 +9,14 @@ type
   TServidorREST = class
   private
     FServer: TIdHTTPServer;
-    procedure OnCommandGet(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+
+    procedure ProcessRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+    procedure HandleGet(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+    procedure HandlePost(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+    procedure HandlePut(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+    procedure HandleDelete(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+
+    procedure HandleErrors400(AMsg: string; var AResponseInfo: TIdHTTPResponseInfo);
   public
     procedure StartServer;
     procedure StopServer;
@@ -20,19 +27,58 @@ implementation
 uses
   System.JSON;
 
-procedure TServidorREST.OnCommandGet(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+procedure TServidorREST.ProcessRequest(AContext: TIdContext; ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+begin
+  if ARequestInfo.Command = 'GET' then
+    HandleGet(ARequestInfo, AResponseInfo)
+  else
+  if ARequestInfo.Command = 'POST' then
+    HandlePost(ARequestInfo, AResponseInfo)
+  else
+  if ARequestInfo.Command = 'PUT' then
+    HandlePut(ARequestInfo, AResponseInfo)
+  else
+  if ARequestInfo.Command = 'DELETE' then
+    HandleDelete(ARequestInfo, AResponseInfo)
+  else
+  begin
+    AResponseInfo.ResponseNo := 405; // Método não permitido
+    AResponseInfo.ContentText := 'Método não permitido';
+  end;
+end;
+
+procedure TServidorREST.StartServer;
+begin
+  DataProvider := TDataProvider.Create();
+  FServer := TIdHTTPServer.Create(nil);
+  FServer.DefaultPort := 8080;
+  FServer.OnCommandGet := ProcessRequest;
+  FServer.OnCommandOther := ProcessRequest;
+
+  FServer.Active := True;
+  Writeln('Servidor REST rodando na porta 8080...');
+end;
+
+procedure TServidorREST.HandleErrors400(AMsg: string; var AResponseInfo: TIdHTTPResponseInfo);
+begin
+  AResponseInfo.ContentText := AMsg;
+  AResponseInfo.ResponseNo := 400;
+end;
+
+procedure TServidorREST.HandleGet(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
 var
   Negocio: TClienteNegocio;
   JSONArr: TJSONArray;
   Cliente: TJSONObject;
   DataSet: TDataSet;
 begin
-  if ARequestInfo.Document = '/clientes' then
+  if (ARequestInfo.Document = '/clientes') then
   begin
     Negocio := TClienteNegocio.Create;
     try
       DataSet := Negocio.ListarClientes;
       JSONArr := TJSONArray.Create;
+
       while not DataSet.Eof do
       begin
         Cliente := TJSONObject.Create;
@@ -41,31 +87,85 @@ begin
         JSONArr.AddElement(Cliente);
         DataSet.Next;
       end;
+
       AResponseInfo.ContentType := 'application/json';
       AResponseInfo.ContentText := JSONArr.ToString;
       AResponseInfo.ResponseNo := 200;
     finally
       Negocio.Free;
     end;
-  end
-  else
-  if ARequestInfo.Document = '/deletarclientes' then
-  begin
-    JSONArr := TJSONArray.Create;
-    Negocio.DeleteClientById(DataSet.FieldByName('ID').AsString);
-  end
-  else
-    AResponseInfo.ResponseNo := 404;
+  end;
 end;
 
-procedure TServidorREST.StartServer;
+procedure TServidorREST.HandlePost(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+var
+  Negocio: TClienteNegocio;
+  JSONBody: TJSONObject;
+  ResponseText: string;
+  PostData: TStringStream;
 begin
-  DataProvider := TDataProvider.Create();
-  FServer := TIdHTTPServer.Create(nil);
-  FServer.DefaultPort := 8080;
-  FServer.OnCommandGet := OnCommandGet;
-  FServer.Active := True;
-  Writeln('Servidor REST rodando na porta 8080...');
+  if (ARequestInfo.Document = '/clientes') then
+  begin
+    PostData := TStringStream.Create('', TEncoding.UTF8);
+    ARequestInfo.PostStream.Position := 0;
+    PostData.CopyFrom(ARequestInfo.PostStream, ARequestInfo.PostStream.Size);
+
+    JSONBody := TJSONObject.ParseJSONValue(PostData.DataString) as TJSONObject;
+    try
+      if Assigned(JSONBody) then
+      begin
+        if JSONBody.Values['teste'] <> nil then
+          ResponseText := 'Campo recebido: ' + JSONBody.Values['teste'].Value
+        else
+          ResponseText := 'Campo não encontrado no JSON';
+
+        AResponseInfo.ContentText := ResponseText;
+        AResponseInfo.ResponseNo := 200;
+      end;
+    finally
+      JSONBody.Free;
+    end;
+  end
+end;
+
+procedure TServidorREST.HandlePut(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+begin
+
+end;
+
+procedure TServidorREST.HandleDelete(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+var
+  Negocio: TClienteNegocio;
+  Route, IdPessoa: string;
+  RowsAffected: Integer;
+  JSONObj: TJSONObject;
+begin
+  if (ARequestInfo.Document.StartsWith('/clientes')) then
+  begin
+    JSONObj := TJSONObject.Create;
+    try
+      Route := ARequestInfo.Document;
+      IdPessoa := Route.Substring(9);
+
+      if (IdPessoa = '') then
+      begin
+        HandleErrors400('Parametro IdPessoa é obrigatório.', AResponseInfo);
+        exit;
+      end;
+
+      RowsAffected := Negocio.DeletePessoa(IdPessoa);
+
+      AResponseInfo.ContentType := 'application/json';
+      AResponseInfo.ContentText := JSONObj.ToString;
+
+      if (RowsAffected > 0) then
+        AResponseInfo.ResponseNo := 200
+      else
+        AResponseInfo.ResponseNo := 404;
+    finally
+      JSONObj.Free;
+    end;
+  end;
 end;
 
 procedure TServidorREST.StopServer;
