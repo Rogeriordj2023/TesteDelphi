@@ -90,7 +90,7 @@ begin
   Query := TFDQuery.Create(nil);
   try
     Query.Connection := DataProvider.FDConnection;
-    Query.SQL.Text := 'UPDATE PESSOA SET flnatureza=:flnatureza, dsdocumento=:dsdocumento, nmprimeiro=:nmprimeiro, nmsegundo=:nmsegundo' +
+    Query.SQL.Text := 'UPDATE PESSOA SET flnatureza=:flnatureza, dsdocumento=:dsdocumento, nmprimeiro=:nmprimeiro, nmsegundo=:nmsegundo ' +
                       'WHERE IDPESSOA=:IDPESSOA';
     Query.ParamByName('IDPESSOA').AsInteger   := IdPessoa;
     Query.ParamByName('flnatureza').AsInteger := StrtoInt(DJson.Values['flnatureza'].Value);

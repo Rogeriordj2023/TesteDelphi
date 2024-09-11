@@ -72,7 +72,7 @@ var
   Cliente: TJSONObject;
   DataSet: TDataSet;
 begin
-  if (ARequestInfo.Document = '/clientes') then
+  if (ARequestInfo.Document = '/pessoa') then
   begin
     Negocio := TClienteNegocio.Create;
     try
@@ -104,7 +104,7 @@ var
   ResponseText: string;
   PostData: TStringStream;
 begin
-  if (ARequestInfo.Document = '/clientes') then
+  if (ARequestInfo.Document = '/pessoa') then
   begin
     PostData := TStringStream.Create('', TEncoding.UTF8);
     ARequestInfo.PostStream.Position := 0;
@@ -124,9 +124,7 @@ begin
         // ********************* //
         // 1. Criar e chamar função Negocio.InserirPessoa.
         // 2. Renomear tudo que está de Cliente para Pessoa
-
-
-
+        Negocio.InserirPessoa(JSONBody);
         AResponseInfo.ContentText := ResponseText;
         AResponseInfo.ResponseNo := 200;
       end;
@@ -137,14 +135,37 @@ begin
 end;
 
 procedure TServidorREST.HandlePut(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
+var
+  Negocio: TClienteNegocio;
+  Route, IdPessoa: string;
+  RowsAffected: Integer;
+  JSONBody: TJSONObject;
+  ResponseText: string;
+  PostData: TStringStream;
+  JSONObj: TJSONObject;
 begin
-        // ********************* //
-        //        TO-DO          //
-        // ********************* //
-        // 1. Validar se IdPessoa foi informado e consultar no banco se existe
-        // 2. Pegar o parametro da rota (igual no delete)
-        // 3. Pegar o corpo do BODY (igual o insert)
-        // 4. Criar e chamar função Negocio.AlterarPessoa.
+  PostData := TStringStream.Create('', TEncoding.UTF8);
+  ARequestInfo.PostStream.Position := 0;
+  PostData.CopyFrom(ARequestInfo.PostStream, ARequestInfo.PostStream.Size);
+
+  Route := ARequestInfo.Document;
+  IdPessoa := Route.Substring(8);
+  JSONObj := TJSONObject.Create;
+  JSONBody := TJSONObject.ParseJSONValue(PostData.DataString) as TJSONObject;
+
+  try
+    if Assigned(JSONBody) then
+    begin
+      Negocio.AlterarPessoa(JSONBody,StrtoInt(IdPessoa));
+      AResponseInfo.ContentType := 'application/json';
+      AResponseInfo.ContentText := JSONObj.ToString;
+
+      AResponseInfo.ResponseNo := 200;
+    end;
+  finally
+    JSONBody.Free;
+    JSONObj.Free;
+  end;
 end;
 
 procedure TServidorREST.HandleDelete(ARequestInfo: TIdHTTPRequestInfo; AResponseInfo: TIdHTTPResponseInfo);
@@ -154,12 +175,12 @@ var
   RowsAffected: Integer;
   JSONObj: TJSONObject;
 begin
-  if (ARequestInfo.Document.StartsWith('/clientes')) then
+  if (ARequestInfo.Document.StartsWith('/pessoa')) then
   begin
     JSONObj := TJSONObject.Create;
     try
       Route := ARequestInfo.Document;
-      IdPessoa := Route.Substring(9);
+      IdPessoa := Route.Substring(8);
 
       if (IdPessoa = '') then
       begin
