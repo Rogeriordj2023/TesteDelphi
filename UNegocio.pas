@@ -75,7 +75,8 @@ begin
   if not DataProvider.Conectar then
     raise Exception.Create('Erro ao conectar ao banco de dados'); 
 
-  Result := DataProvider.ExecutarQuery('SELECT * FROM PESSOA');
+  Result := DataProvider.ExecutarQuery('SELECT P.*, E.dsCep FROM PESSOA P '+
+                                       'LEFT JOIN endereco E ON E.idpessoa = p.idpessoa ');
 end;
 
 function TClienteNegocio.AlterarPessoa(const DJson: TJSONObject; const IdPessoa: integer): Integer;

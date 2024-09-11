@@ -114,16 +114,6 @@ begin
     try
       if Assigned(JSONBody) then
       begin
-        //if JSONBody.Values['teste'] <> nil then
-        //  ResponseText := 'Campo recebido: ' + JSONBody.Values['teste'].Value
-        //else
-        //  ResponseText := 'Campo não encontrado no JSON';
-
-        // ********************* //
-        //        TO-DO          //
-        // ********************* //
-        // 1. Criar e chamar função Negocio.InserirPessoa.
-        // 2. Renomear tudo que está de Cliente para Pessoa
         Negocio.InserirPessoa(JSONBody);
         AResponseInfo.ContentText := ResponseText;
         AResponseInfo.ResponseNo := 200;
@@ -139,10 +129,10 @@ var
   Negocio: TClienteNegocio;
   Route, IdPessoa: string;
   RowsAffected: Integer;
-  JSONObj: TJSONObject;
   JSONBody: TJSONObject;
   ResponseText: string;
   PostData: TStringStream;
+  JSONObj: TJSONObject;
 begin
   PostData := TStringStream.Create('', TEncoding.UTF8);
   ARequestInfo.PostStream.Position := 0;
@@ -150,17 +140,21 @@ begin
 
   Route := ARequestInfo.Document;
   IdPessoa := Route.Substring(8);
-
+  JSONObj := TJSONObject.Create;
   JSONBody := TJSONObject.ParseJSONValue(PostData.DataString) as TJSONObject;
+
   try
     if Assigned(JSONBody) then
     begin
-      Negocio.AlterarPessoa(JSONBody, IdPessoa);
-      AResponseInfo.ContentText := ResponseText;
+      Negocio.AlterarPessoa(JSONBody,StrtoInt(IdPessoa));
+      AResponseInfo.ContentType := 'application/json';
+      AResponseInfo.ContentText := JSONObj.ToString;
+
       AResponseInfo.ResponseNo := 200;
     end;
   finally
     JSONBody.Free;
+    JSONObj.Free;
   end;
 end;
 

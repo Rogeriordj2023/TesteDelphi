@@ -42,7 +42,7 @@ begin
     HandleDelete(ARequestInfo, AResponseInfo)
   else
   begin
-    AResponseInfo.ResponseNo := 405; // Método não permitido
+    AResponseInfo.ResponseNo := 405;
     AResponseInfo.ContentText := 'Método não permitido';
   end;
 end;
@@ -82,8 +82,14 @@ begin
       while not DataSet.Eof do
       begin
         Cliente := TJSONObject.Create;
-        Cliente.AddPair('ID', DataSet.FieldByName('idpessoa').AsString);
-        Cliente.AddPair('Nome', DataSet.FieldByName('nmprimeiro').AsString);
+        Cliente.AddPair('idpessoa', DataSet.FieldByName('idpessoa').AsInteger);
+        Cliente.AddPair('flnatureza', DataSet.FieldByName('flnatureza').AsInteger);
+        Cliente.AddPair('dsdocumento', DataSet.FieldByName('dsdocumento').AsString);
+        Cliente.AddPair('nmprimeiro', DataSet.FieldByName('nmprimeiro').AsString);
+        Cliente.AddPair('nmsegundo', DataSet.FieldByName('nmsegundo').AsString);
+        Cliente.AddPair('dtregistro', DataSet.FieldByName('dtregistro').AsString);
+        Cliente.AddPair('dsCep', DataSet.FieldByName('dsCep').AsString);
+
         JSONArr.AddElement(Cliente);
         DataSet.Next;
       end;
